@@ -32,6 +32,9 @@ By default it prints a table with:
 - `IP`
 - `MAC`
 - `Name`
+- `Vendor`
+
+Vendor lookup uses a bundled JSON file generated from the IEEE MA-L public listing.
 
 Name lookup is enabled by default. Use `--no-names` for the fastest output.
 
@@ -73,10 +76,16 @@ Only show devices with names containing `pi-`:
 lanscan --name pi-
 ```
 
+Only show devices with vendors containing `raspberry`:
+
+```sh
+lanscan --vendor raspberry
+```
+
 Combine filters and JSON:
 
 ```sh
-lanscan --name pi- --json
+lanscan --name pi- --vendor raspberry --json
 ```
 
 ## Options
@@ -89,6 +98,7 @@ lanscan --name pi- --json
 --json             Output JSON instead of a table.
 --names            Resolve device names. Enabled by default; use --no-names to disable.
 --name, -n         Only show devices whose name contains this text.
+--vendor, -v       Only show devices whose vendor contains this text.
 --no-ping          Do not ping first; only read the current ARP table.
 ```
 
@@ -105,6 +115,7 @@ lanscan --name pi- --json
     {
       "ip": "192.168.86.41",
       "mac": "2c:cf:67:81:d:88",
+      "vendor": "Raspberry Pi (Trading) Ltd",
       "hostname": "pi-kato.lan",
       "name": "pi-kato.lan"
     }
@@ -117,6 +128,14 @@ lanscan --name pi- --json
 This is intentionally macOS-focused. It shells out to macOS networking tools instead of using external scanners.
 
 ARP-based discovery only finds devices that are visible on the local link and present in the ARP table after the scan. Some devices may ignore ping or may not have a resolvable name.
+
+Vendor is based on the MAC address prefix. It identifies the network hardware vendor, which is not always the same as the product brand.
+
+Update the bundled vendor JSON from IEEE:
+
+```sh
+npm run update-vendors
+```
 
 The default subnet assumption is `/24`. Use `--subnet` if your network is different.
 

@@ -51,6 +51,11 @@ const argv = await yargs(hideBin(process.argv))
     describe: "Only show devices whose name contains this text",
     type: "string",
   })
+  .option("vendor", {
+    alias: "v",
+    describe: "Only show devices whose vendor contains this text",
+    type: "string",
+  })
   .strict()
   .help()
   .parse();
@@ -66,7 +71,7 @@ try {
     resolveNames: argv.names !== false,
   });
 
-  const devices = filterDevices(result.devices, { name: argv.name });
+  const devices = filterDevices(result.devices, { name: argv.name, vendor: argv.vendor });
   const output = { ...result, devices };
 
   if (argv.json) {
@@ -88,10 +93,15 @@ function filterDevices(devices, filters) {
     filtered = filtered.filter((device) => (device.name || device.hostname || "").toLowerCase().includes(query));
   }
 
+  if (filters.vendor) {
+    const query = filters.vendor.toLowerCase();
+    filtered = filtered.filter((device) => (device.vendor || "").toLowerCase().includes(query));
+  }
+
   return filtered;
 }
 
-function printTable(devices) {
+function printTable(devices, options = {}) {
   if (!devices.length) {
     console.log("No devices found.");
     return;
@@ -101,17 +111,19 @@ function printTable(devices) {
     ip: device.ip,
     mac: device.mac || "-",
     name: device.name || device.hostname || "-",
+    vendor: device.vendor || "-",
   }));
   const widths = {
     ip: Math.max(2, ...rows.map((row) => row.ip.length)),
     mac: Math.max(3, ...rows.map((row) => row.mac.length)),
     name: Math.max(4, ...rows.map((row) => row.name.length)),
+    vendor: Math.max(6, ...rows.map((row) => row.vendor.length)),
   };
 
-  console.log(`${pad("IP", widths.ip)}  ${pad("MAC", widths.mac)}  Name`);
-  console.log(`${"-".repeat(widths.ip)}  ${"-".repeat(widths.mac)}  ${"-".repeat(widths.name)}`);
+  console.log(`${pad("IP", widths.ip)}  ${pad("MAC", widths.mac)}  ${pad("Name", widths.name)}  ${pad("Vendor", widths.vendor)}`);
+  console.log(`${"-".repeat(widths.ip)}  ${"-".repeat(widths.mac)}  ${"-".repeat(widths.name)}  ${"-".repeat(widths.vendor)}`);
   for (const row of rows) {
-    console.log(`${pad(row.ip, widths.ip)}  ${pad(row.mac, widths.mac)}  ${row.name}`);
+    console.log(`${pad(row.ip, widths.ip)}  ${pad(row.mac, widths.mac)}  ${pad(row.name, widths.name)}  ${pad(row.vendor, widths.vendor)}`);
   }
 }
 

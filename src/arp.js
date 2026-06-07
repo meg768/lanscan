@@ -1,6 +1,7 @@
 import { compareIp } from "./network.js";
+import { vendorForMac } from "./vendors.js";
 
-export function parseArpTable(output) {
+export function parseArpTable(output, options = {}) {
   const devices = [];
   for (const line of output.split("\n")) {
     const match = /^(?<host>\S+)\s+\((?<ip>\d+\.\d+\.\d+\.\d+)\)\s+at\s+(?<mac>[0-9a-f:]+|incomplete)/i.exec(line.trim());
@@ -11,6 +12,7 @@ export function parseArpTable(output) {
       ip: match.groups.ip,
       mac: normalizeMac(match.groups.mac),
       hostname: normalizeHostname(match.groups.host),
+      vendor: vendorForMac(match.groups.mac, options),
     });
   }
 

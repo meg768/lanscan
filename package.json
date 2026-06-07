@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node ./lanscan.js",
-    "test": "node --test"
+    "test": "node --test",
+    "update-vendors": "node ./scripts/update-vendors.js"
   },
   "keywords": [
     "lan",
