@@ -1,0 +1,27 @@
+{
+  "name": "lanscan",
+  "version": "0.1.0",
+  "description": "CLI for listing devices on the local network from macOS.",
+  "type": "module",
+  "bin": {
+    "lanscan": "./lanscan.js"
+  },
+  "scripts": {
+    "start": "node ./lanscan.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "lan",
+    "network",
+    "scanner",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "yargs": "^17.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
